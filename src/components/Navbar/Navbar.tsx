@@ -16,9 +16,9 @@ const Navbar = () => {
       <div className="flex-1 flex justify-between items-center">
         <Link href="/" className="flex items-center">
           <Image
-            src="/decoswaplogo10.png"
+            src="/decoswaplogofeb.png"
             alt="Decoswap"
-            className="h-[40px] w-auto"
+            className="h-[50px] w-auto"
             priority
           />
         </Link>
