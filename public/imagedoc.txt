@@ -1,0 +1,1 @@
+convert pilegold.png -resize 500x500\> pile.png
