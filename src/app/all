@@ -1,0 +1,64 @@
+'use client';
+
+export default function Home1() {
+  return (
+    <div className="flex-1 flex items-center justify-end pl-8 md:pl-12 lg:pl-20 pr-6 md:pr-8 lg:pr-10 py-6">
+      <div className="flex flex-col max-w-xl">
+        {/* Small header text - aligned left */}
+        <p className="text-sm md:text-base text-gray-300 tracking-wider mb-4 uppercase text-left">
+          Stop Slippage Losses
+        </p>
+        
+        {/* Main headline - aligned left */}
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6 text-left">
+          One platform for{' '}
+          <span className="text-blue-500">trading</span> and{' '}
+          <span className="text-blue-500">swap intelligence</span>
+        </h1>
+        
+        {/* Subtitle - aligned left */}
+        <p className="text-lg md:text-xl text-gray-300 mb-8 text-left">
+          Your key aid to making intelligent trading decisions.
+        </p>
+        
+        {/* Get Started button - aligned left */}
+        <div className="flex justify-start">
+          <button className="px-8 py-4 text-lg font-semibold rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition">
+            Get Started
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+// import { cookieStorage, createStorage, http } from '@wagmi/core'
+import Navbar from "@/components/Navbar/Navbar";
+import Home1 from "./Home1";
+import Home2 from "./Home2";
+
+export default function Home() {
+  return (
+    <div className="flex flex-col bg-black min-h-screen w-full">
+      <Navbar />
+      <div className="w-full flex justify-center">
+        <h1 className="text-4xl text-white font-bold mb-0">Decoswap</h1>
+      </div>
+      <div className="flex flex-col md:flex-row gap-0 md:gap-2 w-full mt-8 flex-1">
+        <Home1 />
+        <Home2 />
+      </div>
+      <div className="w-full flex justify-center mt-12 mb-6">
+        <a
+          href="https://docs.google.com/forms/d/e/1FAIpQLScLE_WCzj2ngsp7d1Kckjv5YFJfn7SR4j6uxtnvbPt36JQZ2Q/viewform"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-8 py-4 text-lg font-semibold rounded-xl
+            bg-white text-black
+            hover:bg-gray-200 transition"
+        >
+          Join the Waitlist
+        </a>
+      </div>
+    </div>
+  );
+}

@@ -1,7 +1,7 @@
 export function sqrtPriceX96ToPrice(
   sqrtPriceX96: string,
   decimalsToken0: number,
-  decimalsToken1: number
+  decimalsToken1: number,
 ): number {
   const sqrt = Number(sqrtPriceX96);
   const Q96 = Math.pow(2, 96);
@@ -11,4 +11,3 @@ export function sqrtPriceX96ToPrice(
 
   return priceRaw * decimalAdjustment;
 }
-

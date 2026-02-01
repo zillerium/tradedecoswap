@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -13,7 +12,7 @@ body {
 }
 
 body {
-	margin: 0;
+  margin: 0;
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
@@ -68,12 +67,12 @@ button1 {
 
 button1:hover {
   background-color: black;
-    color: white;
+  color: white;
 }
 
 button1:active {
   background-color: #333; /* Dark gray on click */
-    color: white;
+  color: white;
 }
 
 h1 {
@@ -86,7 +85,6 @@ pre {
   word-break: break-all;
 }
 
-
 .link-button {
   background-color: black;
   color: white;
@@ -96,16 +94,16 @@ pre {
 }
 
 .link-button:hover {
-  background-color: #333;  /* Darken the background on hover */
+  background-color: #333; /* Darken the background on hover */
 }
 
 .link-button:hover {
-  background-color: white;  /* Change background to white on hover */
-  color: black;  /* Change text color to black on hover */
+  background-color: white; /* Change background to white on hover */
+  color: black; /* Change text color to black on hover */
 }
 
 .advice {
-  text-align: 'center';
-   margin-bottom: 10px;
-   line-height: 25px;
+  text-align: "center";
+  margin-bottom: 10px;
+  line-height: 25px;
 }

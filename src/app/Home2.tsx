@@ -1,39 +1,13 @@
-'use client';
+"use client";
 
 export default function Home2() {
   return (
-    <div className="flex-1 p-6 rounded-lg">
-      <div className="flex flex-col w-full">
-        {/* Heading */}
-        {/* Boxes wrapper */}
-        <div className="flex flex-col items-center gap-6">
-        
-      
-
-	<div className="w-full max-w-xl bg-gray-900/80  p-6 rounded-xl">
-            <div className="flex items-start gap-4 ">
-              <div className="flex-shrink-0  flex items-center justify-center w-7 h-7 rounded-full bg-amber-400 text-black text-sm font-bold ">
-                ✓
-              </div>
-              <p className="text-gray-200 leading-relaxed">
-                AI Decision Making
-              </p>
-            </div>
-          </div>
-
-          <div className="w-full max-w-xl bg-gray-900/80 p-6 rounded-xl">
-            <div className="flex items-start gap-4  ">
-              <div className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full bg-amber-400 text-black text-sm font-bold ">
-                ✓
-              </div>
-              <p className="text-gray-200 leading-relaxed">
-               Crypto Swaps
-              </p>
-            </div>
-          </div>
-
-        </div>
-      </div>
+    <div className="flex-1 flex items-center justify-center p-4">
+      <img
+        src="/home2.png"
+        alt="Dashboard"
+        className="w-full h-auto max-w-full rounded-md object-contain"
+      />
     </div>
   );
 }

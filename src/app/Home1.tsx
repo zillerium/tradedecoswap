@@ -2,38 +2,33 @@
 
 export default function Home1() {
   return (
-    <div className="flex-1 p-6 rounded-lg">
-      <div className="flex flex-col w-full">
-        {/* Heading */}
-        {/* Boxes wrapper */}
-        <div className="flex flex-col items-center gap-6">
-        
-      
+    <div
+      className="
+        flex-1
+        flex
+        items-center
+        justify-end
+        pl-8 md:pl-12 lg:pl-20
+        pr-6 md:pr-8 lg:pr-10
+        py-6
+      "
+    >
+      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight text-left max-w-xl">
 
-	<div className="w-full max-w-xl bg-gray-900/80  p-6 rounded-xl">
-            <div className="flex items-start gap-4 ">
-              <div className="flex-shrink-0  flex items-center justify-center w-7 h-7 rounded-full bg-amber-400 text-black text-sm font-bold ">
-                ✓
-              </div>
-              <p className="text-gray-200 leading-relaxed">
-               Eliminating Impermanent Losses
-              </p>
-            </div>
-          </div>
+        <span className="block text-sm md:text-base text-gray-300 uppercase mb-4 font-normal">
+          Stop Slippage Losses
+        </span>
 
-          <div className="w-full max-w-xl bg-gray-900/80 p-6 rounded-xl">
-            <div className="flex items-start gap-4  ">
-              <div className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full bg-amber-400 text-black text-sm font-bold ">
-                ✓
-              </div>
-              <p className="text-gray-200 leading-relaxed">
-               Optimizing Returns
-              </p>
-            </div>
-          </div>
+        One platform for{' '}
+        <span className="text-blue-500">trading</span> and{' '}
+        <span className="text-blue-500">swap intelligence</span>
 
-        </div>
-      </div>
+        <span className="block text-lg md:text-xl text-gray-300 mt-6 font-normal">
+          Your key aid to making intelligent trading decisions.
+        </span>
+
+      </h1>
     </div>
   );
 }
+

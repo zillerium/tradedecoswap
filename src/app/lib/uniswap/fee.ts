@@ -3,4 +3,3 @@ export function formatFee(fee: string | number): string {
   const percent = feeNumber / 10_000;
   return `${feeNumber} (${percent}%)`;
 }
-

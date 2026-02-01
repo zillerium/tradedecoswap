@@ -2,31 +2,27 @@
 import Navbar from "@/components/Navbar/Navbar";
 import Home1 from "./Home1";
 import Home2 from "./Home2";
+import LogoScroll from "./LogoScroll";
+import OptimalPrices from "./OptimalPrices";
+import ExecutionPath from "./ExecutionPath";
+import RiskScore from "./RiskScore";
 
 export default function Home() {
   return (
-    <div className="flex flex-col bg-black  min-h-screen w-full ">
+    <div className="flex flex-col bg-black min-h-screen w-full">
       <Navbar />
-
-      <div className="w-full flex justify-center">
-        <h1 className="text-4xl text-white font-bold mb-0">Decoswap</h1>
-      </div>
-
-      {/* Video embed */}
-      <div className="w-full max-w-4xl mx-auto aspect-video">
-        <iframe
-          className="w-full h-full rounded-lg"
-          src="https://www.youtube.com/embed/JKF4CpOJQG4"
-          title="Decoswap video"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
-      </div>
-
-      <div className="flex flex-col md:flex-row gap-4 w-full mt-8">
+      <div className="flex flex-col md:flex-row gap-0 md:gap-2 w-full mt-8 flex-1">
         <Home1 />
         <Home2 />
+      </div>
+
+   <LogoScroll />
+
+    {/* Three feature boxes */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mt-12 px-8 md:px-16 lg:px-24">
+        <OptimalPrices />
+        <ExecutionPath />
+        <RiskScore />
       </div>
 
       <div className="w-full flex justify-center mt-12 mb-6">
@@ -35,8 +31,8 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
           className="px-8 py-4 text-lg font-semibold rounded-xl
-                     bg-white text-black
-                     hover:bg-gray-200 transition"
+            bg-white text-black
+            hover:bg-gray-200 transition"
         >
           Join the Waitlist
         </a>

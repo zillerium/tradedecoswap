@@ -64,4 +64,3 @@ export function getTokenInfo(address: string): TokenInfo | null {
 
   return null;
 }
-
