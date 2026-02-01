@@ -2,14 +2,14 @@
 
 export default function RiskScore() {
   return (
-    <div className="bg-gray-800 rounded-lg p-6 flex flex-col items-center justify-center">
+    <div className="bg-gray-950/50 rounded-lg p-6 flex flex-col items-center justify-center border border-gray-800">
       {/* Image */}
       <div className="w-full flex justify-center mb-4">
         <img
-          src="/placeholder3.png"
+          src="risk.png"
           alt="Risk Score"
           className="max-w-full h-auto"
-          style={{ width: "60%" }}
+          style={{ width: "80%" }}
         />
       </div>
       
@@ -20,7 +20,7 @@ export default function RiskScore() {
       
       {/* Text - White */}
       <p className="text-white text-base md:text-lg text-center">
-        Assess and manage your trading risks effectively
+        Assess risks effectively
       </p>
     </div>
   );

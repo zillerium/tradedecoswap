@@ -6,9 +6,6 @@ import Image from "next/image";
 
 import { CustomButton } from "./CustomButton";
 import { DashBoard } from "./DashBoard";
-import { Problem } from "./Problem";
-import { About } from "./About";
-import { Solution } from "./Solution";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -50,9 +47,6 @@ const Navbar = () => {
         } w-full lg:flex lg:w-auto lg:items-center`}
       >
         <ul className="flex flex-col lg:flex-row gap-4 items-center text-lg pt-0 lg:pt-0">
-          <Solution />
-          <Problem />
-          <About />
           <DashBoard />
           <CustomButton />
         </ul>

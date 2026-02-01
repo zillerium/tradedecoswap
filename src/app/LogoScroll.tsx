@@ -16,34 +16,34 @@ export default function LogoScroll() {
     <div className="w-full overflow-hidden bg-black py-8">
       {/* Container with margins */}
       <div className="mx-8 md:mx-16 lg:mx-24">
-        <div className="relative flex items-center gap-8 md:gap-12 lg:gap-16">
+        <div className="relative flex items-center">
           {/* First set of logos */}
-          <div className="flex animate-scroll items-center gap-8 md:gap-12 lg:gap-16">
+          <div className="flex animate-scroll items-center shrink-0">
             {logos.map((logo, index) => (
               <div
                 key={`logo-1-${index}`}
-                className="flex-shrink-0 flex items-center justify-center min-w-[120px] md:min-w-[150px] lg:min-w-[180px]"
+                className="flex-shrink-0 flex items-center justify-center bg-black min-w-[140px] md:min-w-[170px] lg:min-w-[200px] px-4 md:px-6 lg:px-8"
               >
                 <img
                   src={logo}
                   alt={`Partner logo ${index + 1}`}
-                  className="h-8 md:h-10 lg:h-12 w-auto max-w-full object-contain opacity-70 hover:opacity-100 transition-opacity"
+                  className="h-8 md:h-10 lg:h-12 w-auto max-w-[100px] md:max-w-[120px] lg:max-w-[140px] object-contain opacity-70 hover:opacity-100 transition-opacity"
                 />
               </div>
             ))}
           </div>
           
           {/* Duplicate set for seamless loop */}
-          <div className="flex animate-scroll items-center gap-8 md:gap-12 lg:gap-16">
+          <div className="flex animate-scroll items-center shrink-0">
             {logos.map((logo, index) => (
               <div
                 key={`logo-2-${index}`}
-                className="flex-shrink-0 flex items-center justify-center min-w-[120px] md:min-w-[150px] lg:min-w-[180px]"
+                className="flex-shrink-0 flex items-center justify-center bg-black min-w-[140px] md:min-w-[170px] lg:min-w-[200px] px-4 md:px-6 lg:px-8"
               >
                 <img
                   src={logo}
                   alt={`Partner logo ${index + 1}`}
-                  className="h-8 md:h-10 lg:h-12 w-auto max-w-full object-contain opacity-70 hover:opacity-100 transition-opacity"
+                  className="h-8 md:h-10 lg:h-12 w-auto max-w-[100px] md:max-w-[120px] lg:max-w-[140px] object-contain opacity-70 hover:opacity-100 transition-opacity"
                 />
               </div>
             ))}

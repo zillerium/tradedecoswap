@@ -2,14 +2,14 @@
 
 export default function OptimalPrices() {
   return (
-    <div className="bg-gray-800 rounded-lg p-6 flex flex-col items-center justify-center">
+    <div className="bg-gray-950/50 rounded-lg p-6 flex flex-col items-center justify-center border border-gray-800">
       {/* Image */}
       <div className="w-full flex justify-center mb-4">
         <img
-          src="/placeholder1.png"
+          src="optimalprices.png"
           alt="Optimal Prices"
           className="max-w-full h-auto"
-          style={{ width: "60%" }}
+          style={{ width: "80%" }}
         />
       </div>
       
