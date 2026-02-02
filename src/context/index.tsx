@@ -15,9 +15,9 @@ const queryClient = new QueryClient()
 
 // Set up metadata
 const metadata = {
-  name: 'decoswap.live',
+  name: 'decoswap.capital',
   description: 'decoswap-pro',
-  url: 'https://decoswap.live', // origin must match your domain & subdomain
+  url: 'https://decoswap.capital', // origin must match your domain & subdomain
   icons: ['https://decoswap.pro/favicon.ico']
 }
 
