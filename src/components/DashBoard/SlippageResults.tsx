@@ -1,6 +1,7 @@
 'use client';
 
 import { formatTo2DP, formatUSD, formatPercent } from '../Util/formatUtils';
+import SlippageGauge from './SlippageGauge';
 
 type SlippageData = {
   wethAmount: number;
@@ -42,53 +43,52 @@ export default function SlippageResults({ data }: SlippageResultsProps) {
         </div>
       ) : (
         <div className="flex flex-col gap-3">
-          {/* Swap Request */}
+          {/* Line 1: Swap Request */}
           <div className="bg-gray-800 rounded-lg p-4">
             <p className="text-gray-400 text-sm">
               Swap Request: <span className="text-white font-semibold">WETH to USDC: {formatTo2DP(data.wethAmount)} WETH</span>
             </p>
           </div>
 
-          {/* Expected USDC */}
+          {/* Line 2: Expected USDC + Actual USDC */}
           <div className="bg-gray-800 rounded-lg p-4">
-            <p className="text-gray-400 text-sm">
-              Expected USDC: <span className="text-white font-semibold">{formatUSD(data.expectedUSDC)}</span>
-            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <p className="text-gray-400 text-sm">
+                Expected USDC: <span className="text-white font-semibold">{formatUSD(data.expectedUSDC)}</span>
+              </p>
+              <p className="text-gray-400 text-sm">
+                Actual USDC: <span className="text-white font-semibold">{formatUSD(data.actualUSDC)}</span>
+              </p>
+            </div>
           </div>
 
-          {/* Actual USDC */}
+          {/* Line 3: Start Price + End Price */}
           <div className="bg-gray-800 rounded-lg p-4">
-            <p className="text-gray-400 text-sm">
-              Actual USDC: <span className="text-white font-semibold">{formatUSD(data.actualUSDC)}</span>
-            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <p className="text-gray-400 text-sm">
+                Start Price: <span className="text-white font-semibold">{formatUSD(data.startPrice)}</span>
+              </p>
+              <p className="text-gray-400 text-sm">
+                End Price: <span className="text-white font-semibold">{formatUSD(data.endPrice)}</span>
+              </p>
+            </div>
           </div>
 
-          {/* Start Price */}
+          {/* Line 4: Slippage USDC + Slippage Percent */}
           <div className="bg-gray-800 rounded-lg p-4">
-            <p className="text-gray-400 text-sm">
-              Start Price: <span className="text-white font-semibold">{formatUSD(data.startPrice)}</span>
-            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <p className="text-gray-400 text-sm">
+                Slippage USDC: <span className="text-red-400 font-semibold">{formatUSD(data.slippageUSD)}</span>
+              </p>
+              <p className="text-gray-400 text-sm">
+                Slippage Percent: <span className="text-red-400 font-semibold">{formatPercent(data.slippagePercent)}</span>
+              </p>
+            </div>
           </div>
 
-          {/* End Price */}
-          <div className="bg-gray-800 rounded-lg p-4">
-            <p className="text-gray-400 text-sm">
-              End Price: <span className="text-white font-semibold">{formatUSD(data.endPrice)}</span>
-            </p>
-          </div>
-
-          {/* Slippage USD */}
-          <div className="bg-gray-800 rounded-lg p-4">
-            <p className="text-gray-400 text-sm">
-              Slippage USDC: <span className="text-red-400 font-semibold">{formatUSD(data.slippageUSD)}</span>
-            </p>
-          </div>
-
-          {/* Slippage Percent */}
-          <div className="bg-gray-800 rounded-lg p-4">
-            <p className="text-gray-400 text-sm">
-              Slippage Percent: <span className="text-red-400 font-semibold">{formatPercent(data.slippagePercent)}</span>
-            </p>
+          {/* Slippage Gauge Visualization */}
+          <div className="bg-gray-800 rounded-lg p-6">
+            <SlippageGauge slippagePercent={data.slippagePercent} maxPercent={1} />
           </div>
         </div>
       )}
