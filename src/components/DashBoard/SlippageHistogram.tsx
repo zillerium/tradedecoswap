@@ -27,21 +27,19 @@ type SlippageHistogramProps = {
 export default function SlippageHistogram({ shouldFetch, onFetchComplete }: SlippageHistogramProps) {
   const [loading, setLoading] = useState(false);
   const [poolLiquidityViews, setPoolLiquidityViews] = useState<PoolLiquidityView[] | null>(null);
+  const [hasAttemptedFetch, setHasAttemptedFetch] = useState(false);
 
   useEffect(() => {
-    console.log("SlippageHistogram useEffect triggered, shouldFetch:", shouldFetch);
-    if (shouldFetch) {
-      console.log("Calling handleGetTickData...");
+    if (shouldFetch && !hasAttemptedFetch) {
       handleGetTickData();
     }
   }, [shouldFetch]);
 
   const handleGetTickData = async () => {
     try {
-      console.log("Starting fetch to /api/slippage_liquidity_view");
+      setHasAttemptedFetch(true);
       setLoading(true);
       const res = await fetch("/api/slippage_liquidity_view");
-      console.log("Fetch response status:", res.status, res.statusText);
       
       if (!res.ok) {
         console.error("API returned error status:", res.status);
@@ -50,20 +48,14 @@ export default function SlippageHistogram({ shouldFetch, onFetchComplete }: Slip
       }
       
       const json = await res.json();
-      console.log("Slippage tick data received:", JSON.stringify(json, null, 2));
-      console.log("Is array?", Array.isArray(json));
-      console.log("Type of json:", typeof json);
-      console.log("Has currentPrice?", json?.currentPrice);
 
       // Handle both single object and array responses
       let dataArray: PoolLiquidityView[];
       
       if (Array.isArray(json)) {
-        console.log("Response is array, length:", json.length);
         dataArray = json;
       } else if (json && typeof json === 'object' && json.currentPrice !== undefined) {
         // Single object returned - wrap it in an array
-        console.log("Response is single object, wrapping in array");
         dataArray = [json];
       } else {
         console.error("Unexpected liquidity response shape:", json);
@@ -71,33 +63,22 @@ export default function SlippageHistogram({ shouldFetch, onFetchComplete }: Slip
         return;
       }
 
-      console.log("DataArray before setting:", dataArray);
       if (dataArray.length >= 1) {
-        console.log("Setting poolLiquidityViews with", dataArray.length, "items");
         setPoolLiquidityViews(dataArray);
-        console.log("poolLiquidityViews set successfully");
       } else {
         console.error("Data array is empty");
         setPoolLiquidityViews(null);
       }
     } catch (err) {
       console.error("Tick fetch failed with error:", err);
-      if (err instanceof Error) {
-        console.error("Error message:", err.message);
-        console.error("Error stack:", err.stack);
-      }
       setPoolLiquidityViews(null);
     } finally {
-      console.log("Fetch complete, setting loading to false");
       setLoading(false);
       if (onFetchComplete) {
-        console.log("Calling onFetchComplete callback");
         onFetchComplete();
       }
     }
   };
-
-  console.log("SlippageHistogram render - loading:", loading, "poolLiquidityViews:", poolLiquidityViews?.length);
 
   if (loading) {
     return (
@@ -109,15 +90,19 @@ export default function SlippageHistogram({ shouldFetch, onFetchComplete }: Slip
     );
   }
 
+  // Don't render anything if no data yet (normal state before user clicks button)
   if (!poolLiquidityViews || poolLiquidityViews.length < 1) {
-    console.log("Not rendering histograms - no data or insufficient data");
     return null;
   }
 
-  console.log("Rendering histograms with", poolLiquidityViews.length, "views");
-  
-  // Calculate dynamic width based on number of bars
+  // Safely access view data
   const view = poolLiquidityViews[0];
+  if (!view || !view.liquidity) {
+    console.error("Invalid view data structure");
+    return null;
+  }
+
+  // Calculate dynamic width based on number of bars
   const numBars = view.liquidity.length;
   const maxBarWidth = 80; // Maximum width per bar in pixels
   const minWidth = 300; // Minimum chart width
@@ -125,8 +110,6 @@ export default function SlippageHistogram({ shouldFetch, onFetchComplete }: Slip
   
   // Calculate optimal width: number of bars * max bar width, but constrained
   const calculatedWidth = Math.min(maxWidth, Math.max(minWidth, numBars * maxBarWidth));
-  
-  console.log("Number of bars:", numBars, "Calculated width:", calculatedWidth);
   
   return (
     <div className="w-full flex justify-center py-8 mt-8">
