@@ -31,6 +31,8 @@ export default function PoolLiquidityHistogram({
   const chartData = buckets.map((b) => ({
     priceKey: `${b.priceLower.toFixed(2)}–${b.priceUpper.toFixed(2)}`,
     priceMid: (b.priceLower + b.priceUpper) / 2,
+    priceLower: b.priceLower,
+    priceUpper: b.priceUpper,
     liquidityUSD: Number(b.liquidityUSD),
     isActive:
       currentPrice !== undefined &&
@@ -38,32 +40,34 @@ export default function PoolLiquidityHistogram({
       currentPrice < b.priceUpper,
   }));
 
-function formatFetchedAt(iso?: string) {
-  if (!iso) return null;
-  const d = new Date(iso);
-  return d.toLocaleString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-}
+  function formatFetchedAt(iso?: string) {
+    if (!iso) return null;
+    const d = new Date(iso);
+    return d.toLocaleString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  }
 
+  // Calculate tick positions at bar edges
+  const firstPrice = buckets[0].priceLower;
+  const lastPrice = buckets[buckets.length - 1].priceUpper;
+  const middlePrice = (firstPrice + lastPrice) / 2;
 
   return (
     <div className="w-full max-w-[1024px] h-[360px]">
-<h2 className="text-white text-lg font-semibold mb-2">
-  {currentPrice !== undefined && (
-    <span className="text-gray-400 ml-3 text-base font-normal">
-      Price (USD): ${currentPrice.toFixed(4)}
-      {fetchedAt && (
-        <>{" "}at {formatFetchedAt(fetchedAt)}</>
-      )}
-    </span>
-  )}
-</h2>
+      <h2 className="text-white text-lg font-semibold mb-2">
+        {currentPrice !== undefined && (
+          <span className="text-gray-400 ml-3 text-base font-normal">
+            Price (USD): ${currentPrice.toFixed(4)}
+            {fetchedAt && <>{" "}at {formatFetchedAt(fetchedAt)}</>}
+          </span>
+        )}
+      </h2>
 
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
@@ -73,14 +77,8 @@ function formatFetchedAt(iso?: string) {
           <XAxis
             dataKey="priceMid"
             type="number"
-            domain={["dataMin", "dataMax"]}
-            ticks={[
-              Math.min(...chartData.map((d) => d.priceMid)),
-              (Math.min(...chartData.map((d) => d.priceMid)) +
-                Math.max(...chartData.map((d) => d.priceMid))) /
-                2,
-              Math.max(...chartData.map((d) => d.priceMid)),
-            ]}
+            domain={[firstPrice, lastPrice]}
+            ticks={[firstPrice, middlePrice, lastPrice]}
             stroke="#e5e7eb"
             tick={{ fill: "#e5e7eb", fontSize: 12 }}
             tickFormatter={(v) => `$${Math.round(v)}`}

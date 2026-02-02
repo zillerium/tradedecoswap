@@ -1,0 +1,428 @@
+'use client';
+
+import { useState } from 'react';
+import Navbar from '@/components/Navbar/Navbar';
+import SlippageRequest from './SlippageRequest';
+import SlippageResults from './SlippageResults';
+import SlippageHistogram from './SlippageHistogram';
+
+type SlippageData = {
+  wethAmount: number;
+  startPrice: number;
+  endPrice: number;
+  slippagePercent: number;
+  expectedUSDC: number;
+  actualUSDC: number;
+  slippageUSD: number;
+  error?: string;
+};
+
+export default function DashBoardCom() {
+  const [slippageData, setSlippageData] = useState<SlippageData | null>(null);
+  const [shouldFetchHistogram, setShouldFetchHistogram] = useState(false);
+
+  const handleSlippageData = (data: SlippageData | null) => {
+    console.log("handleSlippageData called with:", data);
+    setSlippageData(data);
+    // Only fetch histogram if slippage calculation was successful (no error)
+    if (data && !data.error) {
+      console.log("Slippage successful, setting shouldFetchHistogram to true");
+      setShouldFetchHistogram(true);
+    } else {
+      console.log("Slippage had error or no data, setting shouldFetchHistogram to false");
+      setShouldFetchHistogram(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col bg-black min-h-screen w-full">
+      <Navbar />
+      <div className="w-full px-8 md:px-16 lg:px-24 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+          <SlippageRequest onSlippageData={handleSlippageData} />
+          <SlippageResults data={slippageData} />
+        </div>
+        
+        {/* Histogram appears below after successful slippage calculation */}
+        <SlippageHistogram 
+          shouldFetch={shouldFetchHistogram}
+          onFetchComplete={() => setShouldFetchHistogram(false)}
+        />
+      </div>
+    </div>
+  );
+}
+'use client';
+
+import { useState, useEffect } from 'react';
+import PoolLiquidityHistogram from '@/components/Pool/PoolLiquidityHistogram';
+
+type LiquidityBucket = {
+  priceLower: number;
+  priceUpper: number;
+  liquidityUSD: string;
+};
+
+type PoolLiquidityView = {
+  poolAddress: string;
+  fetchedAt: string;
+  currentPrice: number;
+  priceStart: number;
+  priceEnd: number;
+  priceStep: number;
+  liquidity: LiquidityBucket[];
+};
+
+type SlippageHistogramProps = {
+  shouldFetch: boolean;
+  onFetchComplete?: () => void;
+};
+
+export default function SlippageHistogram({ shouldFetch, onFetchComplete }: SlippageHistogramProps) {
+  const [loading, setLoading] = useState(false);
+  const [poolLiquidityViews, setPoolLiquidityViews] = useState<PoolLiquidityView[] | null>(null);
+
+  useEffect(() => {
+    console.log("SlippageHistogram useEffect triggered, shouldFetch:", shouldFetch);
+    if (shouldFetch) {
+      console.log("Calling handleGetTickData...");
+      handleGetTickData();
+    }
+  }, [shouldFetch]);
+
+  const handleGetTickData = async () => {
+    try {
+      console.log("Starting fetch to /api/slippage_liquidity_view");
+      setLoading(true);
+      const res = await fetch("/api/slippage_liquidity_view");
+      console.log("Fetch response status:", res.status, res.statusText);
+      
+      if (!res.ok) {
+        console.error("API returned error status:", res.status);
+        setPoolLiquidityViews(null);
+        return;
+      }
+      
+      const json = await res.json();
+      console.log("Slippage tick data received:", JSON.stringify(json, null, 2));
+      console.log("Is array?", Array.isArray(json));
+      console.log("Type of json:", typeof json);
+      console.log("Has currentPrice?", json?.currentPrice);
+
+      // Handle both single object and array responses
+      let dataArray: PoolLiquidityView[];
+      
+      if (Array.isArray(json)) {
+        console.log("Response is array, length:", json.length);
+        dataArray = json;
+      } else if (json && typeof json === 'object' && json.currentPrice !== undefined) {
+        // Single object returned - wrap it in an array
+        console.log("Response is single object, wrapping in array");
+        dataArray = [json];
+      } else {
+        console.error("Unexpected liquidity response shape:", json);
+        setPoolLiquidityViews(null);
+        return;
+      }
+
+      console.log("DataArray before setting:", dataArray);
+      if (dataArray.length >= 1) {
+        console.log("Setting poolLiquidityViews with", dataArray.length, "items");
+        setPoolLiquidityViews(dataArray);
+        console.log("poolLiquidityViews set successfully");
+      } else {
+        console.error("Data array is empty");
+        setPoolLiquidityViews(null);
+      }
+    } catch (err) {
+      console.error("Tick fetch failed with error:", err);
+      if (err instanceof Error) {
+        console.error("Error message:", err.message);
+        console.error("Error stack:", err.stack);
+      }
+      setPoolLiquidityViews(null);
+    } finally {
+      console.log("Fetch complete, setting loading to false");
+      setLoading(false);
+      if (onFetchComplete) {
+        console.log("Calling onFetchComplete callback");
+        onFetchComplete();
+      }
+    }
+  };
+
+  console.log("SlippageHistogram render - loading:", loading, "poolLiquidityViews:", poolLiquidityViews?.length);
+
+  if (loading) {
+    return (
+      <div className="w-full flex justify-center py-4">
+        <div className="bg-gray-900 rounded-lg p-8 border border-gray-800">
+          <p className="text-gray-400 text-center">Loading liquidity data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!poolLiquidityViews || poolLiquidityViews.length < 1) {
+    console.log("Not rendering histograms - no data or insufficient data");
+    return null;
+  }
+
+  console.log("Rendering histograms with", poolLiquidityViews.length, "views");
+  return (
+    <div className="w-full flex justify-center py-8 mt-8">
+      <div className="w-full max-w-[500px]">
+        <h3 className="text-white text-xl font-semibold mb-4 text-center">
+          Liquidity Distribution
+        </h3>
+        {poolLiquidityViews.slice(0, 1).map((view, idx) => (
+          <div
+            key={idx}
+            className="w-full h-[400px] bg-gray-900 rounded-lg overflow-hidden border border-gray-800 p-4"
+          >
+            <PoolLiquidityHistogram
+              currentPrice={view.currentPrice}
+              buckets={view.liquidity}
+              fetchedAt={view.fetchedAt}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+'use client';
+
+import { useState } from 'react';
+
+type SlippageData = {
+  wethAmount: number;
+  startPrice: number;
+  endPrice: number;
+  slippagePercent: number;
+  expectedUSDC: number;
+  actualUSDC: number;
+  slippageUSD: number;
+  error?: string;
+};
+
+type SlippageRequestProps = {
+  onSlippageData: (data: SlippageData | null) => void;
+};
+
+export default function SlippageRequest({ onSlippageData }: SlippageRequestProps) {
+  const [loading, setLoading] = useState(false);
+  const [amount, setAmount] = useState('1');
+  const [token1, setToken1] = useState('weth');
+  const [token2, setToken2] = useState('usdc');
+
+  const handleGetSlippage = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/get_slippage?amount=${amount}&token1=${token1}&token2=${token2}`);
+      const json = await res.json();
+      console.log("Slippage data:", json);
+      
+      // Check if response contains an error
+      if (json.error) {
+        // Pass a special error object to indicate small amount
+        onSlippageData({ 
+          error: "No slippage because the amount is too small",
+          wethAmount: 0,
+          startPrice: 0,
+          endPrice: 0,
+          slippagePercent: 0,
+          expectedUSDC: 0,
+          actualUSDC: 0,
+          slippageUSD: 0
+        });
+      } else {
+        // Pass data to parent component
+        onSlippageData(json);
+      }
+    } catch (err) {
+      console.error("Slippage fetch failed:", err);
+      onSlippageData({ 
+        error: "Failed to fetch slippage data",
+        wethAmount: 0,
+        startPrice: 0,
+        endPrice: 0,
+        slippagePercent: 0,
+        expectedUSDC: 0,
+        actualUSDC: 0,
+        slippageUSD: 0
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 h-full">
+      <h2 className="text-2xl font-bold text-white mb-4">Slippage Assessment</h2>
+      <div className="flex flex-col gap-4">
+        {/* Exchange Dropdown - inline label */}
+        <div className="flex items-center gap-3">
+          <label className="text-gray-400 text-sm whitespace-nowrap">Exchange:</label>
+          <select className="flex-1 bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-purple-500 focus:outline-none">
+            <option value="uniswap-v3">🦄 Uniswap V3</option>
+          </select>
+        </div>
+
+        {/* Network Dropdown - inline label */}
+        <div className="flex items-center gap-3">
+          <label className="text-gray-400 text-sm whitespace-nowrap">Network:</label>
+          <select className="flex-1 bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none">
+            <option value="base">🔵 Base</option>
+          </select>
+        </div>
+
+        {/* Token Dropdowns Row - no labels */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Token 1 Dropdown */}
+          <select 
+            value={token1}
+            onChange={(e) => setToken1(e.target.value)}
+            className="bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-gray-500 focus:outline-none"
+          >
+            <option value="weth">WETH</option>
+          </select>
+
+          {/* Token 2 Dropdown */}
+          <select 
+            value={token2}
+            onChange={(e) => setToken2(e.target.value)}
+            className="bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-gray-500 focus:outline-none"
+          >
+            <option value="usdc">USDC</option>
+          </select>
+        </div>
+
+        {/* Fees Dropdown - no label */}
+        <select className="bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-gray-500 focus:outline-none">
+          <option value="0.05">0.05%</option>
+        </select>
+
+        {/* Amount Input */}
+        <div className="flex items-center gap-3">
+          <label className="text-gray-400 text-sm whitespace-nowrap">Amount:</label>
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="flex-1 bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none"
+            placeholder="Enter amount"
+            step="0.01"
+            min="0"
+          />
+        </div>
+
+        {/* Get Slippage Button */}
+        <button
+          onClick={handleGetSlippage}
+          disabled={loading}
+          className="w-full px-4 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          {loading ? "Loading..." : "Get Slippage"}
+        </button>
+      </div>
+    </div>
+  );
+}
+'use client';
+
+import { formatTo2DP, formatUSD, formatPercent } from '../Util/formatUtils';
+
+type SlippageData = {
+  wethAmount: number;
+  startPrice: number;
+  endPrice: number;
+  slippagePercent: number;
+  expectedUSDC: number;
+  actualUSDC: number;
+  slippageUSD: number;
+  error?: string; // Optional error field
+};
+
+type SlippageResultsProps = {
+  data: SlippageData | null;
+};
+
+export default function SlippageResults({ data }: SlippageResultsProps) {
+  return (
+    <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 h-full">
+      <h2 className="text-2xl font-bold text-white mb-4">Slippage Calculation</h2>
+      
+      {!data ? (
+        <div className="flex flex-col gap-4">
+          <p className="text-gray-400 text-center">
+            Make a request
+          </p>
+          <div className="h-32 bg-gray-800 rounded flex items-center justify-center">
+            <span className="text-gray-500">Complete the request data</span>
+          </div>
+        </div>
+      ) : data.error ? (
+        // Display error message
+        <div className="flex flex-col gap-4">
+          <div className="bg-yellow-900/30 border border-yellow-600 rounded-lg p-4">
+            <p className="text-yellow-400 text-center">
+              {data.error}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {/* Swap Request */}
+          <div className="bg-gray-800 rounded-lg p-4">
+            <p className="text-gray-400 text-sm">
+              Swap Request: <span className="text-white font-semibold">WETH to USDC: {formatTo2DP(data.wethAmount)} WETH</span>
+            </p>
+          </div>
+
+          {/* Expected USDC */}
+          <div className="bg-gray-800 rounded-lg p-4">
+            <p className="text-gray-400 text-sm">
+              Expected USDC: <span className="text-white font-semibold">{formatUSD(data.expectedUSDC)}</span>
+            </p>
+          </div>
+
+          {/* Actual USDC */}
+          <div className="bg-gray-800 rounded-lg p-4">
+            <p className="text-gray-400 text-sm">
+              Actual USDC: <span className="text-white font-semibold">{formatUSD(data.actualUSDC)}</span>
+            </p>
+          </div>
+
+          {/* Start Price */}
+          <div className="bg-gray-800 rounded-lg p-4">
+            <p className="text-gray-400 text-sm">
+              Start Price: <span className="text-white font-semibold">{formatUSD(data.startPrice)}</span>
+            </p>
+          </div>
+
+          {/* End Price */}
+          <div className="bg-gray-800 rounded-lg p-4">
+            <p className="text-gray-400 text-sm">
+              End Price: <span className="text-white font-semibold">{formatUSD(data.endPrice)}</span>
+            </p>
+          </div>
+
+          {/* Slippage USD */}
+          <div className="bg-gray-800 rounded-lg p-4">
+            <p className="text-gray-400 text-sm">
+              Slippage USDC: <span className="text-red-400 font-semibold">{formatUSD(data.slippageUSD)}</span>
+            </p>
+          </div>
+
+          {/* Slippage Percent */}
+          <div className="bg-gray-800 rounded-lg p-4">
+            <p className="text-gray-400 text-sm">
+              Slippage Percent: <span className="text-red-400 font-semibold">{formatPercent(data.slippagePercent)}</span>
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

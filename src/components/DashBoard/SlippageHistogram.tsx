@@ -115,9 +115,22 @@ export default function SlippageHistogram({ shouldFetch, onFetchComplete }: Slip
   }
 
   console.log("Rendering histograms with", poolLiquidityViews.length, "views");
+  
+  // Calculate dynamic width based on number of bars
+  const view = poolLiquidityViews[0];
+  const numBars = view.liquidity.length;
+  const maxBarWidth = 80; // Maximum width per bar in pixels
+  const minWidth = 300; // Minimum chart width
+  const maxWidth = 500; // Maximum chart width
+  
+  // Calculate optimal width: number of bars * max bar width, but constrained
+  const calculatedWidth = Math.min(maxWidth, Math.max(minWidth, numBars * maxBarWidth));
+  
+  console.log("Number of bars:", numBars, "Calculated width:", calculatedWidth);
+  
   return (
     <div className="w-full flex justify-center py-8 mt-8">
-      <div className="w-full max-w-[500px]">
+      <div style={{ width: `${calculatedWidth}px` }}>
         <h3 className="text-white text-xl font-semibold mb-4 text-center">
           Liquidity Distribution
         </h3>
