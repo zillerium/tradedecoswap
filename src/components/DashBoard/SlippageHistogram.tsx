@@ -27,17 +27,15 @@ type SlippageHistogramProps = {
 export default function SlippageHistogram({ shouldFetch, onFetchComplete }: SlippageHistogramProps) {
   const [loading, setLoading] = useState(false);
   const [poolLiquidityViews, setPoolLiquidityViews] = useState<PoolLiquidityView[] | null>(null);
-  const [hasAttemptedFetch, setHasAttemptedFetch] = useState(false);
 
   useEffect(() => {
-    if (shouldFetch && !hasAttemptedFetch) {
+    if (shouldFetch) {
       handleGetTickData();
     }
   }, [shouldFetch]);
 
   const handleGetTickData = async () => {
     try {
-      setHasAttemptedFetch(true);
       setLoading(true);
       const res = await fetch("/api/slippage_liquidity_view");
       
