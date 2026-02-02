@@ -66,7 +66,7 @@ export default function SlippageRequest({ onSlippageData }: SlippageRequestProps
 
   return (
     <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 h-full">
-      <h2 className="text-2xl font-bold text-white mb-4">Slippage Assessment</h2>
+      <h2 className="text-2xl font-bold text-white mb-4">Pool Selection</h2>
       <div className="flex flex-col gap-4">
         {/* Exchange Dropdown - inline label */}
         <div className="flex items-center gap-3">
@@ -117,7 +117,7 @@ export default function SlippageRequest({ onSlippageData }: SlippageRequestProps
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="flex-1 bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none"
+            className="flex-1 min-w-0 bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none"
             placeholder="Enter amount"
             step="0.01"
             min="0"
